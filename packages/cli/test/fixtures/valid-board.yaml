@@ -1,0 +1,11 @@
+# Valid board fixture for CLI integration tests
+board: "CLI Test"
+columns: [To Do, Done]
+tasks:
+  T1:
+    title: "First"
+    status: To Do
+  T2:
+    title: "Second"
+    status: Done
+    depends_on: T1

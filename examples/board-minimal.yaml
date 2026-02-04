@@ -1,0 +1,20 @@
+# Minimal board — smoke test / quick example
+# Use with: statecraft validate examples/board-minimal.yaml
+
+board: "Smoke Test"
+
+columns:
+  - To Do
+  - Done
+
+tasks:
+  TASK-1:
+    title: "First task"
+    status: To Do
+    description: "Minimal task with no optional fields."
+
+  TASK-2:
+    title: "Second task"
+    status: Done
+    owner: dev
+    depends_on: TASK-1

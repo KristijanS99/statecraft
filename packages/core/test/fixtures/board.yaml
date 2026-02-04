@@ -1,0 +1,6 @@
+board: "Fixture Board"
+columns: [To Do, Done]
+tasks:
+  f1:
+    title: "Fixture task"
+    status: To Do

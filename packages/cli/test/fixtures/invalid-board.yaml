@@ -1,0 +1,6 @@
+board: "Invalid"
+columns: [A, B]
+tasks:
+  t1:
+    title: "Task"
+    status: UnknownColumn

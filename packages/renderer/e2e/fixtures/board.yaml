@@ -1,0 +1,17 @@
+# E2E fixture board — used by Playwright tests
+board: "E2E Test Board"
+columns:
+  - Backlog
+  - In Progress
+  - Done
+tasks:
+  TASK-1:
+    title: "First E2E task"
+    status: Backlog
+    description: "Used by E2E tests"
+  TASK-2:
+    title: "Second E2E task"
+    status: Done
+  TASK-3:
+    title: "In-progress task"
+    status: In Progress

@@ -1,0 +1,34 @@
+# Private docs 
+docs-private/
+
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+build/
+*.tsbuildinfo
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# IDE / OS
+.idea/
+.vscode/
+*.swp
+.DS_Store
+
+# Logs
+*.log
+npm-debug.log*
+
+# Test / coverage
+coverage/
+.nyc_output/
+test-results/
+playwright-report/
+playwright/.cache/
+
+

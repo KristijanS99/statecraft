@@ -1,0 +1,33 @@
+# Auth Service board — full example (matches docs/spec.md)
+# Use with: statecraft validate examples/board.yaml
+
+board: "Auth Service"
+
+columns:
+  - Backlog
+  - name: In Progress
+    limit: 3
+  - Review
+  - Done
+
+tasks:
+  AUTH-7:
+    title: "Audit existing JWT usage"
+    status: Done
+    owner: kristijan
+    priority: high
+    description: "List all endpoints and call sites using JWT."
+
+  AUTH-12:
+    title: "Replace JWT with PASETO"
+    status: In Progress
+    owner: kristijan
+    priority: high
+    depends_on: AUTH-7
+    spec: tasks/AUTH-12.md
+
+  AUTH-13:
+    title: "Add rate limiting to auth endpoints"
+    status: Backlog
+    priority: medium
+    description: "Per-IP and per-user limits; configurable thresholds."

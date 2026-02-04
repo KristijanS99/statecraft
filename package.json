@@ -1,0 +1,13 @@
+{
+  "name": "statecraft",
+  "private": true,
+  "packageManager": "pnpm@9.14.2",
+  "scripts": {
+    "build": "pnpm -r run build",
+    "dev": "pnpm --filter @statecraft/renderer run dev",
+    "test": "pnpm -r run test",
+    "test:e2e": "pnpm --filter @statecraft/renderer run test:e2e",
+    "test:coverage": "pnpm -r run test:coverage",
+    "cli": "node packages/cli/dist/index.js"
+  }
+}
