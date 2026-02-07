@@ -65,8 +65,9 @@ export function startRenderServer(options: RenderServerOptions): void {
   // Static files (must be after /api routes so they take precedence)
   app.use(express.static(rendererDist));
 
-  // SPA fallback: serve index.html for non-API routes
-  app.get("*", (_req: Request, res: Response) => {
+  // SPA fallback: serve index.html for GET requests not handled by static (Express 5 / path-to-regexp v8 reject bare '*')
+  app.use((_req: Request, res: Response, next: express.NextFunction) => {
+    if (_req.method !== "GET" || res.headersSent) return next();
     const indexHtml = path.join(rendererDist, "index.html");
     if (fs.existsSync(indexHtml)) {
       res.sendFile(indexHtml);
