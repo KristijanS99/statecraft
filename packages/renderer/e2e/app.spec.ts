@@ -73,4 +73,85 @@ test.describe("Renderer E2E", () => {
     await expect(page.locator(".lane").first()).toBeVisible();
     await expect(page.locator("[data-task-id]").first()).toBeVisible();
   });
+
+  test("dark mode toggle is visible and has accessible label", async ({ page }) => {
+    await page.goto("/");
+    const toggle = page.getByRole("button", { name: /Switch to (dark|light) mode/i });
+    await expect(toggle).toBeVisible();
+  });
+
+  test("clicking dark mode toggle switches theme", async ({ page }) => {
+    await page.goto("/");
+    const toggle = page.getByRole("button", { name: /Switch to (dark|light) mode/i });
+    const doc = page.locator("html");
+    const initialTheme = await doc.getAttribute("data-theme");
+    await toggle.click();
+    await expect(doc).toHaveAttribute("data-theme", initialTheme === "dark" ? "light" : "dark");
+    await toggle.click();
+    await expect(doc).toHaveAttribute("data-theme", initialTheme ?? "light");
+  });
+
+  test("dark mode preference persists in localStorage after reload", async ({ page }) => {
+    await page.goto("/");
+    const toggle = page.getByRole("button", { name: /Switch to (dark|light) mode/i });
+    await toggle.click();
+    const themeAfterToggle = await page.locator("html").getAttribute("data-theme");
+    await page.reload();
+    await expect(page.locator("html")).toHaveAttribute("data-theme", themeAfterToggle ?? "dark");
+  });
+
+  test.describe("task detail modal (clickable cards)", () => {
+    test("clicking a task card opens the task detail modal", async ({ page }) => {
+      await page.goto("/");
+      await expect(page.getByRole("heading", { name: "E2E Test Board", level: 2 })).toBeVisible({
+        timeout: 10_000,
+      });
+      await expect(page.getByRole("dialog")).not.toBeVisible();
+      await page.locator("[data-task-id='TASK-1']").click();
+      await expect(page.getByRole("dialog")).toBeVisible();
+      await expect(page.getByRole("dialog").getByText("TASK-1")).toBeVisible();
+      await expect(page.getByRole("dialog").getByText("First E2E task")).toBeVisible();
+      await expect(page.getByRole("dialog").getByText("Backlog")).toBeVisible();
+    });
+
+    test("task detail modal shows description section when task has description", async ({
+      page,
+    }) => {
+      await page.goto("/");
+      await expect(page.getByRole("heading", { name: "E2E Test Board", level: 2 })).toBeVisible({
+        timeout: 10_000,
+      });
+      await page.locator("[data-task-id='TASK-1']").click();
+      await expect(page.getByRole("dialog")).toBeVisible();
+      await expect(page.getByRole("heading", { name: "Description" })).toBeVisible();
+      await expect(page.getByRole("dialog").getByText("Used by E2E tests")).toBeVisible();
+    });
+
+    test("closing modal via close button hides the modal", async ({ page }) => {
+      await page.goto("/");
+      await expect(page.getByRole("heading", { name: "E2E Test Board", level: 2 })).toBeVisible({
+        timeout: 10_000,
+      });
+      await page.locator("[data-task-id='TASK-1']").click();
+      await expect(page.getByRole("dialog")).toBeVisible();
+      await page.getByRole("button", { name: "Close" }).click();
+      await expect(page.getByRole("dialog")).not.toBeVisible();
+    });
+
+    test("opening another card after closing modal shows that card's details", async ({
+      page,
+    }) => {
+      await page.goto("/");
+      await expect(page.getByRole("heading", { name: "E2E Test Board", level: 2 })).toBeVisible({
+        timeout: 10_000,
+      });
+      await page.locator("[data-task-id='TASK-1']").click();
+      await expect(page.getByRole("dialog").getByText("First E2E task")).toBeVisible();
+      await page.getByRole("button", { name: "Close" }).click();
+      await expect(page.getByRole("dialog")).not.toBeVisible();
+      await page.locator("[data-task-id='TASK-2']").click();
+      await expect(page.getByRole("dialog").getByText("Second E2E task")).toBeVisible();
+      await expect(page.getByRole("dialog").getByText("Done")).toBeVisible();
+    });
+  });
 });

@@ -17,6 +17,11 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
+html[data-theme="dark"] body {
+  background: #111827;
+  color: #f9fafb;
+}
+
 #root {
   min-height: 100vh;
 }
