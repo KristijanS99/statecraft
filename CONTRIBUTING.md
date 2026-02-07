@@ -1,6 +1,6 @@
 # Contributing to Statecraft
 
-Thanks for your interest in contributing. Statecraft is a developer- and AI-first standard for Kanban-style boards as code.
+Thanks for your interest in contributing. Statecraft is an AI-first, developer-friendly standard for Kanban-style boards as code.
 
 ## How to contribute
 

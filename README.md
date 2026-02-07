@@ -7,7 +7,7 @@
   <img src="logo-small.png" width="200" alt="Statecraft logo" />
 </p>
 
-**Statecraft** is a developer- and AI-first standard for representing Kanban-style task boards as code. Boards are defined in a small YAML DSL and live in your repo as the source of truth. The CLI validates and summarizes boards; a read-only web renderer lets you view them in the browser. No editing in the UI—boards are meant to be changed in code (or by AI agents) and versioned in Git.
+**Statecraft** is an AI-first, developer-friendly standard for representing Kanban-style task boards as code. Boards are defined in a small YAML DSL and live in your repo as the source of truth. The CLI validates and summarizes boards; a read-only web renderer lets you view them in the browser. No editing in the UI—boards are meant to be changed by AI agents (or in code) and versioned in Git.
 
 ## Requirements
 
@@ -60,7 +60,7 @@ The board format is a single YAML file with `board` (name), `columns` (ordered l
 
 - **[Statecraft board DSL — Spec (v0)](docs/spec.md)**
 
-AI agents and tools should use the spec as the single source of truth.
+AI agents and developer tools should use the spec as the single source of truth.
 
 ## Project structure
 
