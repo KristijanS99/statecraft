@@ -52,6 +52,10 @@ export function startRenderServer(options: RenderServerOptions): void {
 
   const app = express();
 
+  // Board file directory (for resolving spec paths relative to board)
+  const resolvedBoardPath = path.resolve(process.cwd(), boardPath);
+  const boardDir = path.dirname(resolvedBoardPath);
+
   // API: board file content (raw YAML)
   app.get("/api/board", (_req: Request, res: Response) => {
     const content = readBoardContent(boardPath);
@@ -60,6 +64,32 @@ export function startRenderServer(options: RenderServerOptions): void {
       return;
     }
     res.type("text/yaml").send(content);
+  });
+
+  // API: spec file content (path relative to board file directory; only .md files)
+  app.get("/api/spec", (req: Request, res: Response) => {
+    const rawPath = typeof req.query.path === "string" ? req.query.path : "";
+    if (!rawPath || rawPath.includes("..")) {
+      res.status(400).type("text/plain").send("Invalid or missing path.");
+      return;
+    }
+    const ext = path.extname(rawPath).toLowerCase();
+    if (ext !== ".md") {
+      res.status(400).type("text/plain").send("Only .md spec files are allowed.");
+      return;
+    }
+    const resolved = path.resolve(boardDir, rawPath);
+    const relative = path.relative(boardDir, resolved);
+    if (relative.startsWith("..") || path.isAbsolute(relative)) {
+      res.status(400).type("text/plain").send("Path must be under board directory.");
+      return;
+    }
+    try {
+      const content = fs.readFileSync(resolved, "utf-8");
+      res.type("text/markdown").send(content);
+    } catch {
+      res.status(404).type("text/plain").send("Spec file not found or unreadable.");
+    }
   });
 
   // Static files (must be after /api routes so they take precedence)
@@ -92,7 +122,6 @@ export function startRenderServer(options: RenderServerOptions): void {
     }
   });
 
-  const resolvedBoardPath = path.resolve(process.cwd(), boardPath);
   let debounceTimer: ReturnType<typeof setTimeout> | null = null;
 
   function broadcastBoard(): void {

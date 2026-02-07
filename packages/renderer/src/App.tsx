@@ -1,4 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 import {
   type Board,
   type Task,
@@ -7,8 +9,20 @@ import {
   validate,
   ParseError,
 } from "@statecraft/core";
-import { BoardView } from "./BoardView";
+import { BoardView, getColumnAccent } from "./BoardView";
 import "./App.css";
+
+const THEME_STORAGE_KEY = "statecraft-theme";
+type Theme = "light" | "dark";
+
+function getInitialTheme(): Theme {
+  const stored = localStorage.getItem(THEME_STORAGE_KEY);
+  if (stored === "light" || stored === "dark") return stored;
+  if (typeof window !== "undefined" && window.matchMedia("(prefers-color-scheme: dark)").matches) {
+    return "dark";
+  }
+  return "light";
+}
 
 function getTaskStatusMap(board: Board): Map<string, string> {
   const m = new Map<string, string>();
@@ -33,14 +47,30 @@ function computeMovedTaskIds(
   return moved;
 }
 
+type SelectedTask = { id: string; task: Task };
+
 export default function App() {
+  const [theme, setTheme] = useState<Theme>(getInitialTheme);
   const [board, setBoard] = useState<Board | null>(null);
   const [errors, setErrors] = useState<string[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [movedTaskIds, setMovedTaskIds] = useState<Set<string>>(new Set());
+  const [selectedTask, setSelectedTask] = useState<SelectedTask | null>(null);
+  const [specContent, setSpecContent] = useState<string | null>(null);
+  const [specLoading, setSpecLoading] = useState<boolean>(false);
+  const [specError, setSpecError] = useState<string | null>(null);
   const prevStatusMapRef = useRef<Map<string, string> | null>(null);
   const wsRef = useRef<WebSocket | null>(null);
   const moveClearTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    document.documentElement.setAttribute("data-theme", theme);
+    localStorage.setItem(THEME_STORAGE_KEY, theme);
+  }, [theme]);
+
+  const toggleTheme = useCallback(() => {
+    setTheme((prev) => (prev === "light" ? "dark" : "light"));
+  }, []);
 
   const processContent = useCallback((content: string) => {
     setErrors([]);
@@ -144,11 +174,68 @@ export default function App() {
     [processContent]
   );
 
+  const handleTaskClick = useCallback((id: string, task: Task) => {
+    setSelectedTask({ id, task });
+    setSpecContent(null);
+    setSpecError(null);
+    if (task.spec) {
+      setSpecLoading(true);
+      fetch(`/api/spec?path=${encodeURIComponent(task.spec)}`)
+        .then((res) => {
+          const contentType = res.headers.get("content-type") ?? "";
+          if (!res.ok) {
+            throw new Error(res.status === 404 ? "Spec file not found" : res.statusText);
+          }
+          return res.text().then((text) => {
+            if (
+              contentType.includes("text/html") ||
+              text.trimStart().startsWith("<!") ||
+              text.trimStart().toLowerCase().startsWith("<html")
+            ) {
+              throw new Error("Spec not available (unexpected response)");
+            }
+            return text;
+          });
+        })
+        .then((text) => {
+          setSpecContent(text);
+          setSpecError(null);
+        })
+        .catch((e) => setSpecError(e instanceof Error ? e.message : "Failed to load spec"))
+        .finally(() => setSpecLoading(false));
+    }
+  }, []);
+
+  const closeModal = useCallback(() => {
+    setSelectedTask(null);
+    setSpecContent(null);
+    setSpecError(null);
+    setSpecLoading(false);
+  }, []);
+
   return (
     <div className="app">
       <header className="header">
         <img src="/logo.png" alt="Statecraft" className="header__logo" />
         <h1 className="header__title">Statecraft</h1>
+        <button
+          type="button"
+          className="header__theme-toggle"
+          onClick={toggleTheme}
+          title={theme === "light" ? "Switch to dark mode" : "Switch to light mode"}
+          aria-label={theme === "light" ? "Switch to dark mode" : "Switch to light mode"}
+        >
+          {theme === "light" ? (
+            <svg className="header__theme-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+            </svg>
+          ) : (
+            <svg className="header__theme-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+              <circle cx="12" cy="12" r="5" />
+              <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" />
+            </svg>
+          )}
+        </button>
       </header>
       <main className="main">
         {errors.length > 0 && (
@@ -165,7 +252,124 @@ export default function App() {
         )}
 
         {board ? (
-          <BoardView board={board} movedTaskIds={movedTaskIds} />
+          <>
+            <BoardView
+              board={board}
+              movedTaskIds={movedTaskIds}
+              onTaskClick={handleTaskClick}
+            />
+            {selectedTask && (() => {
+              const statusIndex = board.columns.findIndex(
+                (c) => c.name === selectedTask.task.status
+              );
+              const statusAccent = getColumnAccent(statusIndex >= 0 ? statusIndex : 0);
+              const hasBodyContent =
+                (selectedTask.task.description != null &&
+                  selectedTask.task.description !== "") ||
+                selectedTask.task.owner != null ||
+                selectedTask.task.priority != null ||
+                (selectedTask.task.depends_on != null &&
+                  selectedTask.task.depends_on.length > 0);
+              return (
+              <div
+                className="modal-overlay"
+                role="dialog"
+                aria-modal="true"
+                aria-labelledby="modal-title"
+                onClick={(e) => e.target === e.currentTarget && closeModal()}
+              >
+                <div className="modal" onClick={(e) => e.stopPropagation()}>
+                  <header
+                    className="modal__header"
+                    style={{ borderTopColor: statusAccent } as React.CSSProperties}
+                  >
+                    <div className="modal__header-inner">
+                      <h2 id="modal-title" className="modal__title">
+                        <span className="modal__id">{selectedTask.id}</span>
+                        {selectedTask.task.title}
+                      </h2>
+                      <span
+                        className="modal__status"
+                        style={{ background: statusAccent } as React.CSSProperties}
+                        title={`Column: ${selectedTask.task.status}`}
+                      >
+                        {selectedTask.task.status}
+                      </span>
+                    </div>
+                    <button
+                      type="button"
+                      className="modal__close"
+                      onClick={closeModal}
+                      aria-label="Close"
+                    >
+                      ×
+                    </button>
+                  </header>
+                  <div className="modal__body">
+                    {(selectedTask.task.description != null &&
+                      selectedTask.task.description !== "") ||
+                    selectedTask.task.owner != null ||
+                    selectedTask.task.priority != null ||
+                    (selectedTask.task.depends_on != null &&
+                      selectedTask.task.depends_on.length > 0) ? (
+                      <section className="modal__description-section">
+                        <h3 className="modal__section-title">Description</h3>
+                        {selectedTask.task.description != null &&
+                          selectedTask.task.description !== "" && (
+                            <p className="modal__description">
+                              {selectedTask.task.description}
+                            </p>
+                          )}
+                        {(selectedTask.task.owner != null ||
+                          selectedTask.task.priority != null) && (
+                          <div className="modal__meta">
+                            {selectedTask.task.owner != null && (
+                              <span className="modal__owner">
+                                {selectedTask.task.owner}
+                              </span>
+                            )}
+                            {selectedTask.task.priority != null && (
+                              <span className="modal__priority">
+                                {selectedTask.task.priority}
+                              </span>
+                            )}
+                          </div>
+                        )}
+                        {selectedTask.task.depends_on != null &&
+                          selectedTask.task.depends_on.length > 0 && (
+                            <p className="modal__deps">
+                              Depends on:{" "}
+                              {selectedTask.task.depends_on.join(", ")}
+                            </p>
+                          )}
+                      </section>
+                    ) : null}
+                    {selectedTask.task.spec && (
+                      <div
+                        className={`modal__spec ${hasBodyContent ? "modal__spec--with-separator" : ""}`}
+                      >
+                        <h3 className="modal__spec-title">Spec</h3>
+                        {specLoading && (
+                          <p className="modal__spec-loading">Loading…</p>
+                        )}
+                        {specError && (
+                          <p className="modal__spec-error">{specError}</p>
+                        )}
+                        {specContent != null && !specLoading && (
+                          <div className="modal__spec-content">
+                            <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                              {specContent}
+                            </ReactMarkdown>
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+              );
+            })()}
+          </>
         ) : (
           <section className="load-board" aria-label="Load board">
             <h2 className="load-board__title">Load board</h2>

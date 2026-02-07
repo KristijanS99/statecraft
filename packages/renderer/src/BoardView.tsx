@@ -6,28 +6,45 @@ const COLUMN_ACCENT = [
   "var(--color-tertiary)",
 ] as const;
 
-function getColumnAccent(index: number): string {
+export function getColumnAccent(index: number): string {
   return COLUMN_ACCENT[index % COLUMN_ACCENT.length];
 }
 
 interface BoardViewProps {
   board: Board;
   movedTaskIds?: Set<string>;
+  onTaskClick?: (id: string, task: Task) => void;
 }
 
 function TaskCard({
   id,
   task,
   isMoving,
+  onTaskClick,
 }: {
   id: string;
   task: Task;
   isMoving: boolean;
+  onTaskClick?: (id: string, task: Task) => void;
 }) {
+  const handleClick = () => onTaskClick?.(id, task);
   return (
     <article
-      className={`card ${isMoving ? "card--moving" : ""}`}
+      className={`card ${isMoving ? "card--moving" : ""} ${onTaskClick ? "card--clickable" : ""}`}
       data-task-id={id}
+      role={onTaskClick ? "button" : undefined}
+      tabIndex={onTaskClick ? 0 : undefined}
+      onClick={onTaskClick ? handleClick : undefined}
+      onKeyDown={
+        onTaskClick
+          ? (e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                handleClick();
+              }
+            }
+          : undefined
+      }
     >
       <div className="card__id">{id}</div>
       <h3 className="card__title">{task.title}</h3>
@@ -51,7 +68,7 @@ function TaskCard({
   );
 }
 
-export function BoardView({ board, movedTaskIds = new Set() }: BoardViewProps) {
+export function BoardView({ board, movedTaskIds = new Set(), onTaskClick }: BoardViewProps) {
   const tasksByStatus = new Map<string, { id: string; task: Task }[]>();
   for (const [id, task] of Object.entries(board.tasks) as [string, Task][]) {
     const list = tasksByStatus.get(task.status) ?? [];
@@ -97,6 +114,7 @@ export function BoardView({ board, movedTaskIds = new Set() }: BoardViewProps) {
                     id={id}
                     task={task}
                     isMoving={movedTaskIds.has(id)}
+                    onTaskClick={onTaskClick}
                   />
                 ))}
               </div>
