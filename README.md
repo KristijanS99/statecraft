@@ -9,6 +9,11 @@
 
 **Statecraft** is a developer- and AI-first standard for representing Kanban-style task boards as code. Boards are defined in a small YAML DSL and live in your repo as the source of truth. The CLI validates and summarizes boards; a read-only web renderer lets you view them in the browser. No editing in the UI—boards are meant to be changed in code (or by AI agents) and versioned in Git.
 
+## Requirements
+
+- **Node.js** 20 or later (LTS; actively maintained versions)
+- **pnpm** 9 or later (or use corepack: `corepack enable` then `pnpm install`)
+
 ## Install
 
 ```bash
@@ -71,6 +76,10 @@ AI agents and tools should use the spec as the single source of truth.
 pnpm test        # unit/integration (core + CLI)
 pnpm test:e2e    # Playwright E2E (renderer; builds and serves fixture)
 ```
+
+## Contributing
+
+Contributions are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md) for how to run the project, run tests, and open a PR. We use [Conventional Commits](https://www.conventionalcommits.org/) for commit messages.
 
 ## License
 

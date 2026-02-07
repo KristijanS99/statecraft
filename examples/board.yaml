@@ -1,33 +1,94 @@
-# Auth Service board — full example (matches docs/spec.md)
+# Main example board — many columns and tasks (demo / stress test)
 # Use with: statecraft validate examples/board.yaml
+#           statecraft render examples/board.yaml --open
 
-board: "Auth Service"
+board: "Platform MVP"
 
 columns:
   - Backlog
+  - name: Ready
+    limit: 5
   - name: In Progress
     limit: 3
   - Review
-  - Done
+  - name: Done
+    limit: 20
 
 tasks:
-  AUTH-7:
-    title: "Audit existing JWT usage"
+  P-1:
+    title: "Set up monorepo and tooling"
     status: Done
-    owner: kristijan
+    owner: dev
     priority: high
-    description: "List all endpoints and call sites using JWT."
-
-  AUTH-12:
-    title: "Replace JWT with PASETO"
+  P-2:
+    title: "Define API contract (OpenAPI)"
+    status: Done
+    owner: dev
+    priority: high
+    depends_on: P-1
+  P-3:
+    title: "Implement auth service"
+    status: Done
+    owner: dev
+    priority: high
+    depends_on: P-2
+  P-4:
+    title: "Implement user service"
     status: In Progress
-    owner: kristijan
+    owner: dev
     priority: high
-    depends_on: AUTH-7
-    spec: tasks/AUTH-12.md
-
-  AUTH-13:
-    title: "Add rate limiting to auth endpoints"
+    depends_on: P-2
+  P-5:
+    title: "Add rate limiting middleware"
+    status: In Progress
+    owner: dev
+    priority: medium
+    depends_on: P-3
+  P-6:
+    title: "Write integration tests for auth"
+    status: Review
+    owner: dev
+    priority: high
+    depends_on: P-3
+  P-7:
+    title: "Document deployment runbook"
+    status: Ready
+    owner: ops
+    priority: medium
+  P-8:
+    title: "Set up CI pipeline"
+    status: Ready
+    owner: ops
+    priority: high
+  P-9:
+    title: "Add structured logging"
+    status: Ready
+    owner: dev
+    priority: medium
+  P-10:
+    title: "Implement audit log API"
+    status: Backlog
+    priority: low
+    description: "Read-only API for compliance."
+  P-11:
+    title: "Add health check endpoints"
     status: Backlog
     priority: medium
-    description: "Per-IP and per-user limits; configurable thresholds."
+  P-12:
+    title: "Implement feature flags"
+    status: Backlog
+    priority: low
+  P-13:
+    title: "Optimize database queries for user list"
+    status: Backlog
+    priority: medium
+    depends_on: P-4
+  P-14:
+    title: "Add metrics and dashboards"
+    status: Backlog
+    owner: ops
+    priority: medium
+  P-15:
+    title: "Security review and hardening"
+    status: Backlog
+    priority: high

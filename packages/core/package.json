@@ -1,8 +1,16 @@
 {
   "name": "@statecraft/core",
-  "version": "0.0.1",
-  "private": true,
+  "version": "0.1.0",
+  "description": "Parser, AST, validation, and summarizer for the Statecraft board DSL",
   "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/KristijanS99/statecraft.git"
+  },
+  "license": "GPL-3.0-only",
+  "engines": {
+    "node": ">=20"
+  },
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "exports": {

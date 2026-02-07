@@ -1,8 +1,16 @@
 {
   "name": "statecraft",
-  "version": "0.0.1",
-  "private": true,
+  "version": "0.1.0",
+  "description": "CLI for Statecraft: validate, summarize, and render board-as-code",
   "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/KristijanS99/statecraft.git"
+  },
+  "license": "GPL-3.0-only",
+  "engines": {
+    "node": ">=20"
+  },
   "bin": {
     "statecraft": "./dist/index.js"
   },
