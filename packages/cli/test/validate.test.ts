@@ -8,6 +8,7 @@ const cliRoot = path.join(__dirname, "..");
 const cliPath = path.join(cliRoot, "dist", "index.js");
 const validBoardPath = path.join(cliRoot, "test", "fixtures", "valid-board.yaml");
 const invalidBoardPath = path.join(cliRoot, "test", "fixtures", "invalid-board.yaml");
+const invalidYamlPath = path.join(cliRoot, "test", "fixtures", "invalid-yaml.yaml");
 const missingPath = path.join(cliRoot, "test", "fixtures", "nonexistent.yaml");
 
 function runValidate(boardPath: string, extraArgs: string[] = []): ReturnType<typeof spawnSync> {
@@ -40,5 +41,11 @@ describe("statecraft validate", () => {
     const result = runValidate(validBoardPath, ["other.yaml"]);
     expect(result.status).toBe(1);
     expect(result.stderr).toContain("Only one board file per run");
+  });
+
+  it("exits 1 when file is invalid YAML", () => {
+    const result = runValidate(invalidYamlPath);
+    expect(result.status).toBe(1);
+    expect(result.stderr).toMatch(/Invalid YAML|ParseError|parse/i);
   });
 });
