@@ -1,7 +1,7 @@
 # Runs on push to main (e.g. after a PR merge). Uses conventional commits to
 # determine the next version, bumps version in package.json files, tags, creates
 # a GitHub Release, and publishes @statecraft/core and statecraft to npm.
-# Protect main (require PR + CI) so all changes go through this flow.
+# Protected main (require PR + CI) so all changes go through this flow.
 
 name: Release
 
@@ -41,4 +41,5 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: pnpm exec semantic-release

@@ -10,6 +10,14 @@ const rootDir = path.resolve(__dirname, "..");
  * to npm. Only runs when semantic-release creates a release.
  */
 async function publish(pluginConfig, context) {
+  const token = process.env.NPM_TOKEN || process.env.NODE_AUTH_TOKEN;
+  if (!token || token.length === 0) {
+    throw new Error(
+      "NPM_TOKEN (or NODE_AUTH_TOKEN) is required for npm publish. " +
+        "Add NPM_TOKEN to the repository secrets and ensure the release workflow env passes it."
+    );
+  }
+
   const packages = [
     path.join(rootDir, "packages", "core"),
     path.join(rootDir, "packages", "cli"),
@@ -23,7 +31,7 @@ async function publish(pluginConfig, context) {
       stdio: "inherit",
       env: {
         ...process.env,
-        NODE_AUTH_TOKEN: process.env.NPM_TOKEN || process.env.NODE_AUTH_TOKEN,
+        NODE_AUTH_TOKEN: token,
       },
     });
   }

@@ -1,6 +1,6 @@
 # Statecraft board DSL — Spec (v0)
 
-This document defines the Statecraft board format. A single file describes one Kanban-style board in YAML. The file is the source of truth for humans and AI agents; tools (CLI, renderer) read and validate it.
+This document defines the Statecraft board format. A single file describes one Kanban-style board in YAML. The file is the source of truth for AI agents and developers; tools (CLI, renderer) read and validate it.
 
 **One board per file.** Use `.yaml` or `.yml`. Convention: name the file e.g. `board.yaml`, or pass the path explicitly to tools.
 
@@ -10,7 +10,7 @@ This document defines the Statecraft board format. A single file describes one K
 
 - **Format:** YAML (UTF-8).
 - **Scope:** One board per file. Top-level keys: `board`, `columns`, `tasks`.
-- **Purpose:** Machine-readable task state: columns, tasks, status, dependencies, optional WIP limits. Designed to be written and updated by AI agents and versioned in Git.
+- **Purpose:** Machine-readable task state: columns, tasks, status, dependencies, optional WIP limits. Designed for AI agents to read, write, and update; versioned in Git; developers can work with the same files.
 
 ---
 

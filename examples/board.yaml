@@ -92,3 +92,4 @@ tasks:
     title: "Security review and hardening"
     status: Backlog
     priority: high
+    spec: tasks/security-review.md
