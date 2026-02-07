@@ -1,6 +1,6 @@
 {
   "name": "statecraft",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "CLI for Statecraft: validate, summarize, and render board-as-code",
   "type": "module",
   "repository": {
