@@ -1,13 +1,12 @@
-import express from "express";
+import express, { type Request, type Response } from "express";
 import fs from "node:fs";
 import path from "node:path";
 import { createServer } from "node:http";
-import { WebSocketServer } from "ws";
+import { WebSocket, WebSocketServer } from "ws";
 import { fileURLToPath } from "node:url";
+import { DEFAULT_RENDER_PORT, RENDER_WATCH_DEBOUNCE_MS } from "./constants.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-
-const DEFAULT_PORT = 3000;
 
 /**
  * Resolve path to the renderer's dist folder (sibling package in monorepo).
@@ -40,7 +39,7 @@ export interface RenderServerOptions {
  * Watches the board file and broadcasts content to WS clients on change.
  */
 export function startRenderServer(options: RenderServerOptions): void {
-  const { boardPath, port = DEFAULT_PORT, openBrowser = false } = options;
+  const { boardPath, port = DEFAULT_RENDER_PORT, openBrowser = false } = options;
   const rendererDist = getRendererDistPath();
 
   if (!fs.existsSync(rendererDist) || !fs.statSync(rendererDist).isDirectory()) {
@@ -54,7 +53,7 @@ export function startRenderServer(options: RenderServerOptions): void {
   const app = express();
 
   // API: board file content (raw YAML)
-  app.get("/api/board", (_req, res) => {
+  app.get("/api/board", (_req: Request, res: Response) => {
     const content = readBoardContent(boardPath);
     if (content === null) {
       res.status(404).type("text/plain").send("Board file not found or unreadable.");
@@ -67,7 +66,7 @@ export function startRenderServer(options: RenderServerOptions): void {
   app.use(express.static(rendererDist));
 
   // SPA fallback: serve index.html for non-API routes
-  app.get("*", (_req, res) => {
+  app.get("*", (_req: Request, res: Response) => {
     const indexHtml = path.join(rendererDist, "index.html");
     if (fs.existsSync(indexHtml)) {
       res.sendFile(indexHtml);
@@ -84,7 +83,7 @@ export function startRenderServer(options: RenderServerOptions): void {
   server.on("upgrade", (request, socket, head) => {
     const url = new URL(request.url ?? "", `http://${request.headers.host}`);
     if (url.pathname === "/api/board/watch") {
-      wss.handleUpgrade(request, socket, head, (ws) => {
+      wss.handleUpgrade(request, socket, head, (ws: WebSocket) => {
         wss.emit("connection", ws, request);
       });
     } else {
@@ -94,19 +93,18 @@ export function startRenderServer(options: RenderServerOptions): void {
 
   const resolvedBoardPath = path.resolve(process.cwd(), boardPath);
   let debounceTimer: ReturnType<typeof setTimeout> | null = null;
-  const DEBOUNCE_MS = 100;
 
   function broadcastBoard(): void {
     const content = readBoardContent(boardPath);
     const payload = content ?? "";
-    wss.clients.forEach((client) => {
+    wss.clients.forEach((client: WebSocket) => {
       if (client.readyState === 1) {
         client.send(payload);
       }
     });
   }
 
-  wss.on("connection", (ws) => {
+  wss.on("connection", (ws: WebSocket) => {
     // Send current board on connect
     const content = readBoardContent(boardPath);
     if (content !== null) {
@@ -120,7 +118,7 @@ export function startRenderServer(options: RenderServerOptions): void {
       debounceTimer = setTimeout(() => {
         debounceTimer = null;
         broadcastBoard();
-      }, DEBOUNCE_MS);
+      }, RENDER_WATCH_DEBOUNCE_MS);
     });
   } catch (err) {
     // File might not exist yet; watcher will not run
