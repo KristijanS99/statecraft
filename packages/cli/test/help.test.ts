@@ -50,7 +50,7 @@ describe("statecraft help", () => {
   it("unknown command prints error and exits 1", () => {
     const result = runCli(["unknown"]);
     expect(result.status).toBe(1);
-    expect(result.stderr).toContain("Unknown command");
+    expect(result.stderr).toContain("unknown command");
     expect(result.stderr).toContain("unknown");
   });
 });
