@@ -21,6 +21,10 @@ Then run `statecraft <command>`. Or use `npx @stcrft/statecraft init` (etc.) wit
 | **`statecraft summarize [path]`** | Print a short text summary of the board (name, columns, tasks, WIP/blocked). |
 | **`statecraft render [path]`** | Serve the board in the browser (read-only UI). Options: `--port 3000` (default), `--open` (open browser). Starts a local server with `GET /api/board` and WebSocket for live updates when the file changes. |
 
+## Upgrade notification
+
+After each command, the CLI may check npm for a newer version and print a one-line message to stderr if an upgrade is available. To disable: set `STATECRAFT_NO_UPDATE_CHECK=1` or `CI=true`. When running from the repo (e.g. `pnpm cli validate`), the check is skipped. A cache in the system temp directory is used when writable (writes are best-effort and do not fail the command).
+
 ## Path handling
 
 - **Single path only.** One board file per run. Passing multiple paths is not supported and will exit with an error.
