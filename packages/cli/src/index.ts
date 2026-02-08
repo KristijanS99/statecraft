@@ -1,11 +1,24 @@
 #!/usr/bin/env node
 import { createRequire } from "node:module";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 import { Command } from "commander";
 import { DEFAULT_BOARD_PATH, DEFAULT_RENDER_PORT } from "./constants.js";
 import { runInit, runRender, runSpec, runSummarize, runValidate } from "./executors/index.js";
+import { runUpdateCheck } from "./update-check.js";
 
 const require = createRequire(import.meta.url);
 const { version } = require("../package.json") as { version: string };
+
+/** True when running from monorepo (e.g. pnpm cli validate). */
+function isLocalDev(): boolean {
+  try {
+    const dir = path.dirname(fileURLToPath(import.meta.url));
+    return /packages[/\\]cli[/\\]/.test(dir) || dir.includes("statecraft" + path.sep + "packages" + path.sep + "cli");
+  } catch {
+    return false;
+  }
+}
 
 function rejectMultiplePaths(extra: string[]): void {
   if (extra.length > 0) {
@@ -69,4 +82,6 @@ program
     runRender(path, { port, open: options.open ?? false });
   });
 
-program.parseAsync();
+program.parseAsync().then(() => {
+  runUpdateCheck(version, { isLocalDev: isLocalDev() });
+});

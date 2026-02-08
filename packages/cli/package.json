@@ -29,7 +29,8 @@
     "express": "^5.2.1",
     "open": "^11.0.0",
     "ws": "^8.18.0",
-    "yaml": "^2.8.2"
+    "yaml": "^2.8.2",
+    "semver": "^7.6.3"
   },
   "devDependencies": {
     "@types/express": "^5.0.0",

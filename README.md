@@ -63,6 +63,8 @@ Path defaults to `./board.yaml` when omitted.
 
 **Render options:** `--port 3000` (default), `--open` (open browser).
 
+**Upgrade notification:** After each command, the CLI may check the npm registry for a newer version. If one exists, a one-line message is printed to stderr with an upgrade hint. The check is skipped when `CI=true`, when `STATECRAFT_NO_UPDATE_CHECK=1`, or when running from the monorepo (development). A best-effort cache in the system temp directory is used to avoid hitting the registry on every run (cache write failures are ignored).
+
 **Example boards** are in [`examples/`](examples/): try `pnpm cli validate examples/board.yaml`, then `pnpm cli render examples/board.yaml --open`.
 
 ### Setup with init
