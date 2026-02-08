@@ -152,6 +152,15 @@ describe("statecraft init", () => {
         cwd: tmpDir,
       });
       expect(validateResult.status).toBe(0);
+
+      const configPath = path.join(tmpDir, ".statecraft.json");
+      expect(fs.existsSync(configPath)).toBe(true);
+      const config = JSON.parse(fs.readFileSync(configPath, "utf-8"));
+      expect(config.boardPath).toBe("my-board.yaml");
+      expect(config.tasksDir).toBe("specs");
+      expect(config.cursor).toBe(true);
+      expect(config.claude).toBe(false);
+      expect(config.codex).toBe(false);
     } finally {
       fs.rmSync(tmpDir, { recursive: true, force: true });
     }

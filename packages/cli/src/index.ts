@@ -4,7 +4,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { Command } from "commander";
 import { DEFAULT_BOARD_PATH, DEFAULT_RENDER_PORT } from "./constants.js";
-import { runInit, runRender, runSpec, runSummarize, runValidate } from "./executors/index.js";
+import { runInit, runRender, runSpec, runSummarize, runSync, runValidate } from "./executors/index.js";
 import { runUpdateCheck } from "./update-check.js";
 
 const require = createRequire(import.meta.url);
@@ -80,6 +80,14 @@ program
   .action((path: string, options: { port: string; open: boolean }) => {
     const port = parseInt(options.port, 10) || DEFAULT_RENDER_PORT;
     runRender(path, { port, open: options.open ?? false });
+  });
+
+program
+  .command("sync")
+  .description("Update generated rule files (Cursor, Claude, Codex) to the current template")
+  .option("--dry-run", "list files that would be updated without writing")
+  .action((options: { dryRun?: boolean }) => {
+    runSync({ dryRun: options.dryRun ?? false });
   });
 
 program.parseAsync().then(() => {
