@@ -1,5 +1,5 @@
 /**
- * @statecraft/core — DSL, AST, validation, CRUS operations.
+ * @stcrft/statecraft-core — DSL, AST, validation, CRUS operations.
  * VERSION is injected at build time from package.json (tsup define) so it stays in sync and works in Node and browser bundles.
  */
 declare const __STATECRAFT_CORE_VERSION__: string;

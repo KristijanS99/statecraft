@@ -6,8 +6,8 @@ const { execSync } = require("child_process");
 const rootDir = path.resolve(__dirname, "..");
 
 /**
- * Semantic-release "publish" plugin: publishes @statecraft/core and statecraft
- * to npm. Only runs when semantic-release creates a release.
+ * Semantic-release "publish" plugin: publishes @stcrft/statecraft-core and
+ * @stcrft/statecraft (CLI) to npm. Only runs when semantic-release creates a release.
  */
 async function publish(pluginConfig, context) {
   const token = process.env.NPM_TOKEN || process.env.NODE_AUTH_TOKEN;

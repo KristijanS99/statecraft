@@ -1,5 +1,5 @@
 {
-  "name": "@statecraft/core",
+  "name": "@stcrft/statecraft-core",
   "version": "1.1.1",
   "description": "Parser, AST, validation, and summarizer for the Statecraft board DSL",
   "type": "module",

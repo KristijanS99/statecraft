@@ -1,4 +1,4 @@
-import { parseBoard, validate } from "@statecraft/core";
+import { parseBoard, validate } from "@stcrft/statecraft-core";
 
 function formatValidationError(err: { message: string; path?: string }): string {
   const prefix = err.path != null && err.path !== "" ? `${err.path}: ` : "";

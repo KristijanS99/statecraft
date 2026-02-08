@@ -1,4 +1,4 @@
-import type { Board, Column, Task } from "@statecraft/core";
+import type { Board, Column, Task } from "@stcrft/statecraft-core";
 
 const COLUMN_ACCENT = [
   "var(--color-primary)",

@@ -1,6 +1,6 @@
-# @statecraft/core
+# @stcrft/statecraft-core
 
-Parser, AST, validation, and summarizer for the Statecraft board DSL. No CLI or UI—consumed by `@statecraft/cli` and `@statecraft/renderer`.
+Parser, AST, validation, and summarizer for the Statecraft board DSL. No CLI or UI—consumed by `@stcrft/statecraft` (CLI) and `@stcrft/statecraft-renderer`.
 
 ## Flow
 
@@ -21,5 +21,5 @@ See `docs/spec.md` in the repo root for the board format.
 ## Tests
 
 ```bash
-pnpm --filter @statecraft/core test
+pnpm --filter @stcrft/statecraft-core test
 ```

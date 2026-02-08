@@ -8,7 +8,7 @@ import {
   parseBoardFromString,
   validate,
   ParseError,
-} from "@statecraft/core";
+} from "@stcrft/statecraft-core";
 import { BoardView, getColumnAccent } from "./BoardView";
 import "./App.css";
 
