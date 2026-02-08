@@ -16,7 +16,7 @@ Parser, AST, validation, and summarizer for the Statecraft board DSL. No CLI or 
 - `validate(board: Board): ValidationResult` — Returns `{ valid, errors }`; use for CLI/UI.
 - `summarize(board: Board): string` — Text summary for terminal or paste.
 
-See `docs/spec.md` in the repo root for the board format.
+**Board format:** The DSL is documented in the repo at `docs/spec.md`. If you use the CLI (`@stcrft/statecraft`), run `statecraft spec` to print the spec (also shipped in the CLI package).
 
 ## Tests
 

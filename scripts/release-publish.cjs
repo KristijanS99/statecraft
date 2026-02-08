@@ -26,7 +26,8 @@ async function publish(pluginConfig, context) {
   for (const pkgDir of packages) {
     const name = path.basename(pkgDir);
     context.logger.log("Publishing %s to npm...", name);
-    execSync("npm publish --access public --no-git-checks", {
+    // Use pnpm publish so workspace:* is resolved to real versions in the tarball (npm/yarn can then install)
+    execSync("pnpm publish --access public --no-git-checks", {
       cwd: pkgDir,
       stdio: "inherit",
       env: {
