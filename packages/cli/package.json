@@ -1,6 +1,6 @@
 {
   "name": "@stcrft/statecraft",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "CLI for Statecraft: validate, summarize, and render board-as-code",
   "type": "module",
   "repository": {
@@ -14,7 +14,10 @@
   "bin": {
     "statecraft": "./dist/index.js"
   },
-  "files": ["dist", "spec.md"],
+  "files": [
+    "dist",
+    "spec.md"
+  ],
   "scripts": {
     "build": "node scripts/copy-spec.mjs && tsup",
     "test": "vitest run"
