@@ -1,10 +1,10 @@
-# Valid board fixture for CLI integration tests
+# Valid board fixture for CLI integration tests (canonical columns)
 board: "CLI Test"
-columns: [To Do, Done]
+columns: [Backlog, Ready, In Progress, Done]
 tasks:
   T1:
     title: "First"
-    status: To Do
+    status: Backlog
   T2:
     title: "Second"
     status: Done

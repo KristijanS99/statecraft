@@ -9,9 +9,9 @@ const validBoardYaml = `
 board: "Auth Service"
 columns:
   - Backlog
+  - Ready
   - name: In Progress
     limit: 3
-  - Review
   - Done
 tasks:
   AUTH-7:
@@ -29,7 +29,7 @@ tasks:
     spec: tasks/AUTH-12.md
   AUTH-13:
     title: "Add rate limiting to auth endpoints"
-    status: Backlog
+    status: Ready
     priority: medium
     description: "Per-IP and per-user limits; configurable thresholds."
 `;
@@ -41,8 +41,8 @@ describe("parseBoardFromString", () => {
     expect(board.board).toBe("Auth Service");
     expect(board.columns).toHaveLength(4);
     expect(board.columns[0]).toEqual({ name: "Backlog" });
-    expect(board.columns[1]).toEqual({ name: "In Progress", limit: 3 });
-    expect(board.columns[2]).toEqual({ name: "Review" });
+    expect(board.columns[1]).toEqual({ name: "Ready" });
+    expect(board.columns[2]).toEqual({ name: "In Progress", limit: 3 });
     expect(board.columns[3]).toEqual({ name: "Done" });
 
     expect(Object.keys(board.tasks)).toEqual(["AUTH-7", "AUTH-12", "AUTH-13"]);
@@ -56,7 +56,7 @@ describe("parseBoardFromString", () => {
     expect(board.tasks["AUTH-12"].spec).toBe("tasks/AUTH-12.md");
 
     expect(board.tasks["AUTH-13"].title).toBe("Add rate limiting to auth endpoints");
-    expect(board.tasks["AUTH-13"].status).toBe("Backlog");
+    expect(board.tasks["AUTH-13"].status).toBe("Ready");
     expect(board.tasks["AUTH-13"].priority).toBe("medium");
   });
 
@@ -96,12 +96,12 @@ tasks:
   it("parses minimal board (empty tasks)", () => {
     const yaml = `
 board: "Minimal"
-columns: [To Do, Done]
+columns: [Backlog, Ready, In Progress, Done]
 tasks: {}
 `;
     const board = parseBoardFromString(yaml);
     expect(board.board).toBe("Minimal");
-    expect(board.columns).toHaveLength(2);
+    expect(board.columns).toHaveLength(4);
     expect(board.tasks).toEqual({});
   });
 
@@ -232,8 +232,15 @@ tasks: {}
     const fixturePath = path.join(__dirname, "fixtures", "board.yaml");
     const board = parseBoard(fixturePath);
     expect(board.board).toBe("Fixture Board");
-    expect(board.columns).toHaveLength(2);
+    expect(board.columns).toHaveLength(4);
+    expect(board.columns.map((c) => (typeof c === "string" ? c : c.name))).toEqual([
+      "Backlog",
+      "Ready",
+      "In Progress",
+      "Done",
+    ]);
     expect(board.tasks["f1"].title).toBe("Fixture task");
+    expect(board.tasks["f1"].status).toBe("Backlog");
   });
 
   it("throws ParseError when path does not exist", () => {

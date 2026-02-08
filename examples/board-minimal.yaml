@@ -1,16 +1,18 @@
-# Minimal board — smoke test / quick example
+# Minimal board — smoke test / quick example (canonical columns)
 # Use with: statecraft validate examples/board-minimal.yaml
 
 board: "Smoke Test"
 
 columns:
-  - To Do
+  - Backlog
+  - Ready
+  - In Progress
   - Done
 
 tasks:
   TASK-1:
     title: "First task"
-    status: To Do
+    status: Backlog
     description: "Minimal task with no optional fields."
 
   TASK-2:

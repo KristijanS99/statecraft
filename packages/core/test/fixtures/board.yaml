@@ -1,6 +1,10 @@
 board: "Fixture Board"
-columns: [To Do, Done]
+columns:
+  - Backlog
+  - Ready
+  - In Progress
+  - Done
 tasks:
   f1:
     title: "Fixture task"
-    status: To Do
+    status: Backlog

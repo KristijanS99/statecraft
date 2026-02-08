@@ -14,8 +14,9 @@
   "bin": {
     "statecraft": "./dist/index.js"
   },
+  "files": ["dist", "spec.md"],
   "scripts": {
-    "build": "tsup",
+    "build": "node scripts/copy-spec.mjs && tsup",
     "test": "vitest run"
   },
   "dependencies": {
@@ -23,7 +24,8 @@
     "commander": "^12.1.0",
     "express": "^5.2.1",
     "open": "^11.0.0",
-    "ws": "^8.18.0"
+    "ws": "^8.18.0",
+    "yaml": "^2.8.2"
   },
   "devDependencies": {
     "@types/express": "^5.0.0",

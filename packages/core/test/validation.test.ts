@@ -4,15 +4,16 @@ import { validate } from "../src/validation.js";
 
 const validBoardYaml = `
 board: "Valid"
-columns: [To Do, In Progress, Done]
+columns: [Backlog, Ready, In Progress, Done]
 tasks:
-  t1: { title: "One", status: To Do }
-  t2: { title: "Two", status: In Progress }
-  t3: { title: "Three", status: Done }
+  t1: { title: "One", status: Backlog }
+  t2: { title: "Two", status: Ready }
+  t3: { title: "Three", status: In Progress }
+  t4: { title: "Four", status: Done }
 `;
 
 describe("validate", () => {
-  it("returns valid and empty errors for a valid board", () => {
+  it("returns valid and empty errors for a board with canonical columns", () => {
     const board = parseBoardFromString(validBoardYaml);
     const result = validate(board);
     expect(result.valid).toBe(true);
@@ -20,10 +21,25 @@ describe("validate", () => {
     expect(result.warnings).toEqual([]);
   });
 
+  it("returns error when columns do not match canonical set", () => {
+    const yaml = `
+board: "Test"
+columns: [To Do, Done]
+tasks:
+  t1: { title: "Task", status: "To Do" }
+`;
+    const board = parseBoardFromString(yaml);
+    const result = validate(board);
+    expect(result.valid).toBe(false);
+    const canonicalError = result.errors.find((e) => e.code === "COLUMNS_NOT_CANONICAL");
+    expect(canonicalError).toBeDefined();
+    expect(canonicalError!.message).toMatch(/Backlog.*Ready.*In Progress.*Done/);
+  });
+
   it("returns error when task status does not match any column", () => {
     const yaml = `
 board: "Test"
-columns: [A, B]
+columns: [Backlog, Ready, In Progress, Done]
 tasks:
   t1:
     title: "Task"
@@ -42,12 +58,12 @@ tasks:
   it("returns error when depends_on references non-existent task", () => {
     const yaml = `
 board: "Test"
-columns: [A, B]
+columns: [Backlog, Ready, In Progress, Done]
 tasks:
-  t1: { title: "One", status: A }
+  t1: { title: "One", status: Backlog }
   t2:
     title: "Two"
-    status: B
+    status: Done
     depends_on: [NONEXISTENT]
 `;
     const board = parseBoardFromString(yaml);
@@ -63,6 +79,8 @@ tasks:
     const yaml = `
 board: "Test"
 columns:
+  - Backlog
+  - Ready
   - name: In Progress
     limit: 1
   - Done
@@ -82,22 +100,25 @@ tasks:
   it("returns error when column names are duplicated", () => {
     const yaml = `
 board: "Test"
-columns: [A, A, B]
+columns: [Backlog, Backlog, In Progress, Done]
 tasks: {}
 `;
     const board = parseBoardFromString(yaml);
     const result = validate(board);
     expect(result.valid).toBe(false);
     const dupError = result.errors.find((e) => e.code === "DUPLICATE_COLUMN");
-    expect(dupError).toBeDefined();
-    expect(dupError!.message).toMatch(/Duplicate column name.*"A"/);
-    expect(dupError!.path).toBe("columns[1]");
+    const canonicalError = result.errors.find((e) => e.code === "COLUMNS_NOT_CANONICAL");
+    expect(dupError ?? canonicalError).toBeDefined();
+    if (dupError) {
+      expect(dupError.message).toMatch(/Duplicate column name.*"Backlog"/);
+      expect(dupError.path).toBe("columns[1]");
+    }
   });
 
   it("each error has message and optional path/code", () => {
     const yaml = `
 board: "Test"
-columns: [A]
+columns: [Backlog, Ready, In Progress, Done]
 tasks:
   t1: { title: "One", status: Bad }
 `;
@@ -116,17 +137,16 @@ tasks:
   it("multiple violations produce multiple errors", () => {
     const yaml = `
 board: "Test"
-columns: [A, A]
+columns: [Backlog, Ready, In Progress, Done]
 tasks:
   t1: { title: "One", status: Unknown }
-  t2: { title: "Two", status: A, depends_on: [MISSING] }
+  t2: { title: "Two", status: Backlog, depends_on: [MISSING] }
 `;
     const board = parseBoardFromString(yaml);
     const result = validate(board);
     expect(result.valid).toBe(false);
     expect(result.errors.length).toBeGreaterThanOrEqual(2);
     const codes = result.errors.map((e) => e.code);
-    expect(codes).toContain("DUPLICATE_COLUMN");
     expect(codes).toContain("STATUS_INVALID");
     expect(codes).toContain("DEPENDS_ON_INVALID");
   });

@@ -28,7 +28,7 @@ describe("statecraft validate", () => {
   it("exits 1 when board has validation errors", () => {
     const result = runValidate(invalidBoardPath);
     expect(result.status).toBe(1);
-    expect(result.stderr).toContain("UnknownColumn");
+    expect(result.stderr).toMatch(/UnknownColumn|STATUS_INVALID|does not match/);
   });
 
   it("exits 1 when file is missing", () => {

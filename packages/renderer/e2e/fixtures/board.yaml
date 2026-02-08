@@ -2,6 +2,7 @@
 board: "E2E Test Board"
 columns:
   - Backlog
+  - Ready
   - In Progress
   - Done
 tasks:

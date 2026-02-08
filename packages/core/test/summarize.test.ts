@@ -6,11 +6,11 @@ describe("summarize", () => {
   it("includes board name, column counts, and task lines", () => {
     const yaml = `
 board: "Summary Test"
-columns: [To Do, Done]
+columns: [Backlog, Ready, In Progress, Done]
 tasks:
   T1:
     title: "First task"
-    status: To Do
+    status: Backlog
   T2:
     title: "Second task"
     status: Done
@@ -19,7 +19,7 @@ tasks:
     const out = summarize(board);
     expect(out).toContain("Board: Summary Test");
     expect(out).toContain("Columns:");
-    expect(out).toContain("To Do");
+    expect(out).toContain("Backlog");
     expect(out).toContain("Done");
     expect(out).toContain("Tasks:");
     expect(out).toContain("T1");
@@ -31,7 +31,7 @@ tasks:
   it("ends with a single newline", () => {
     const yaml = `
 board: "X"
-columns: [A]
+columns: [Backlog, Ready, In Progress, Done]
 tasks: {}
 `;
     const board = parseBoardFromString(yaml);
@@ -44,6 +44,8 @@ tasks: {}
     const yaml = `
 board: "WIP"
 columns:
+  - Backlog
+  - Ready
   - name: In Progress
     limit: 2
   - Done
@@ -60,7 +62,7 @@ tasks:
   it("includes Blocked section when a task depends on non-done task", () => {
     const yaml = `
 board: "Blocked"
-columns: [Backlog, Done]
+columns: [Backlog, Ready, In Progress, Done]
 tasks:
   t1: { title: "First", status: Backlog }
   t2: { title: "Second", status: Backlog, depends_on: [t1] }
@@ -76,10 +78,10 @@ tasks:
   it("omits Blocked section when all dependencies are in last column", () => {
     const yaml = `
 board: "Unblocked"
-columns: [To Do, Done]
+columns: [Backlog, Ready, In Progress, Done]
 tasks:
   t1: { title: "First", status: Done }
-  t2: { title: "Second", status: To Do, depends_on: [t1] }
+  t2: { title: "Second", status: Backlog, depends_on: [t1] }
 `;
     const board = parseBoardFromString(yaml);
     const out = summarize(board);
@@ -89,7 +91,7 @@ tasks:
   it("shows (none) for empty tasks", () => {
     const yaml = `
 board: "Empty"
-columns: [A, B]
+columns: [Backlog, Ready, In Progress, Done]
 tasks: {}
 `;
     const board = parseBoardFromString(yaml);

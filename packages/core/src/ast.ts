@@ -4,13 +4,13 @@
  * @see docs/spec.md
  */
 
-/** Column: normalized shape. Parser converts string columns to { name }. */
+/** Column: normalized shape. Parser converts string columns to `{ name }`. Optional `limit` is WIP cap (e.g. In Progress). */
 export interface Column {
   name: string;
   limit?: number;
 }
 
-/** Task: required title + status; optional fields per spec. depends_on normalized to array. */
+/** Task: required `title` and `status`; optional fields per spec. `depends_on` normalized to array by parser. */
 export interface Task {
   title: string;
   status: string;
@@ -22,7 +22,7 @@ export interface Task {
   depends_on?: string[];
 }
 
-/** Board: one board per file. columns ordered; tasks keyed by id. */
+/** Board: one board per file. `columns` in order; `tasks` keyed by task id. */
 export interface Board {
   board: string;
   columns: Column[];

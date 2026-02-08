@@ -2,7 +2,7 @@
 import { createRequire } from "node:module";
 import { Command } from "commander";
 import { DEFAULT_BOARD_PATH, DEFAULT_RENDER_PORT } from "./constants.js";
-import { runRender, runSummarize, runValidate } from "./executors/index.js";
+import { runInit, runRender, runSpec, runSummarize, runValidate } from "./executors/index.js";
 
 const require = createRequire(import.meta.url);
 const { version } = require("../package.json") as { version: string };
@@ -20,6 +20,23 @@ program
   .name("statecraft")
   .description("Validate, summarize, and render Statecraft board files")
   .version(version);
+
+program
+  .command("init")
+  .description("Interactive setup: create board and configure Statecraft for your workflow")
+  .action(async () => {
+    await runInit().catch((err) => {
+      process.stderr.write(err instanceof Error ? err.message : String(err) + "\n");
+      process.exitCode = 1;
+    });
+  });
+
+program
+  .command("spec")
+  .description("Print the board format spec (for AI agents)")
+  .action(() => {
+    runSpec();
+  });
 
 program
   .command("validate")
@@ -52,4 +69,4 @@ program
     runRender(path, { port, open: options.open ?? false });
   });
 
-program.parse();
+program.parseAsync();
