@@ -45,6 +45,21 @@ describe("buildCursorRuleContent", () => {
     expect(content).toContain("status");
   });
 
+  it("with strictMode false omits REQUIRED BEFORE ANY OTHER ACTION block", () => {
+    const content = buildCursorRuleContent("board.yaml", "tasks", { strictMode: false });
+    expect(content).not.toContain("REQUIRED BEFORE ANY OTHER ACTION");
+  });
+
+  it("with requireSpecFile false omits Spec required bullet", () => {
+    const content = buildCursorRuleContent("board.yaml", "tasks", { requireSpecFile: false });
+    expect(content).not.toContain("Spec required:");
+  });
+
+  it("with includeTaskSpecFormat false omits Task spec file format section", () => {
+    const content = buildCursorRuleContent("board.yaml", "tasks", { includeTaskSpecFormat: false });
+    expect(content).not.toContain("Task spec file format");
+  });
+
   it("has valid YAML frontmatter", () => {
     const content = buildCursorRuleContent("board.yaml", "tasks");
     expect(content).toMatch(/^---\n[\s\S]*?\n---/);
@@ -64,6 +79,9 @@ describe("statecraft init", () => {
           "board.yaml",
           "tasks",
           "",
+          "y",
+          "y",
+          "y",
           "n",
           "n",
           "n",
@@ -105,6 +123,9 @@ describe("statecraft init", () => {
           "specs",
           "",
           "y",
+          "y",
+          "y",
+          "y",
           "n",
           "n",
         ],
@@ -122,7 +143,7 @@ describe("statecraft init", () => {
       expect(ruleContent).toContain("statecraft spec");
       expect(ruleContent).toContain("statecraft validate");
       expect(ruleContent).toContain("Task lifecycle");
-      expect(ruleContent).toContain("Prepare for work");
+      expect(ruleContent).toContain("Refine and move to Ready");
       expect(ruleContent).toContain("Ready");
       expect(ruleContent).toContain("AI guidelines for creating tickets");
 
@@ -146,6 +167,9 @@ describe("statecraft init", () => {
           "board.yaml",
           "tasks",
           "",
+          "y",
+          "y",
+          "y",
           "n",
           "y",
           "n",
@@ -161,7 +185,7 @@ describe("statecraft init", () => {
       expect(content).toContain("tasks/<task-id>.md");
       expect(content).toContain("statecraft spec");
       expect(content).toContain("Task lifecycle");
-      expect(content).toContain("Prepare for work");
+      expect(content).toContain("Refine and move to Ready");
       expect(content).toContain("Ready");
       expect(content).toContain("AI guidelines for creating tickets");
       expect(content).not.toMatch(/^---\n/);
@@ -180,6 +204,9 @@ describe("statecraft init", () => {
           "board.yaml",
           "tasks",
           "",
+          "y",
+          "y",
+          "y",
           "n",
           "n",
           "y",
@@ -200,6 +227,33 @@ describe("statecraft init", () => {
     }
   });
 
+  it("generates rule without strict block when user answers n to enforce workflow", async () => {
+    const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "statecraft-init-"));
+    try {
+      await runInit({
+        cwd: tmpDir,
+        answers: [
+          "Strict Off Board",
+          "board.yaml",
+          "tasks",
+          "",
+          "n",
+          "y",
+          "y",
+          "y",
+          "n",
+          "n",
+        ],
+      });
+      const rulePath = path.join(tmpDir, ".cursor", "rules", "statecraft.mdc");
+      expect(fs.existsSync(rulePath)).toBe(true);
+      const content = fs.readFileSync(rulePath, "utf-8");
+      expect(content).not.toContain("REQUIRED BEFORE ANY OTHER ACTION");
+    } finally {
+      fs.rmSync(tmpDir, { recursive: true, force: true });
+    }
+  });
+
   it("appends to existing AGENTS.md when Codex is chosen and file exists", async () => {
     const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "statecraft-init-"));
     try {
@@ -213,6 +267,9 @@ describe("statecraft init", () => {
           "board.yaml",
           "tasks",
           "",
+          "y",
+          "y",
+          "y",
           "n",
           "n",
           "y",
