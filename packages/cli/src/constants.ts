@@ -18,3 +18,12 @@ export const CANONICAL_COLUMNS = ["Backlog", "Ready", "In Progress", "Done"] as 
 
 /** Filename of the board format spec shipped with the CLI package (statecraft spec). */
 export const SPEC_FILENAME = "spec.md";
+
+/** Init default: enforce "create task before work" workflow for all agents. */
+export const INIT_STRICT_MODE_DEFAULT = true;
+
+/** Init default: require each task to have a spec .md file in the tasks directory. */
+export const INIT_REQUIRE_SPEC_FILE_DEFAULT = true;
+
+/** Init default: include task spec .md format guidelines in generated rules. */
+export const INIT_INCLUDE_TASK_SPEC_FORMAT_DEFAULT = true;

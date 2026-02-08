@@ -32,9 +32,9 @@ This document defines the Statecraft board format. A single file describes one K
 
 | Column         | Meaning for AI |
 |----------------|----------------|
-| **Backlog**    | Not yet selected for immediate work. New tasks are created here. May be unrefined or unprioritized. |
-| **Ready**      | Prepared and selected to be worked on next. Definition is clear (e.g. in spec file), dependencies met or N/A; safe to move to In Progress when capacity is free. |
-| **In Progress** | Currently being worked on. Move a task here when starting work; at most one (or a configurable WIP limit) at a time per column if enforced. |
+| **Backlog**    | Initial or vague task. New tasks are created here. May be unrefined—title and minimal spec are enough. After discovery/planning, the agent updates the task spec (description, acceptance criteria) and moves the task to Ready. |
+| **Ready**      | Task is refined: definition is clear, spec file has description and acceptance criteria, and the agent (or human) knows how to solve it. Ready to be worked on. Move here **after** discovery; move to In Progress **only when** starting the actual work. |
+| **In Progress** | Currently being worked on (e.g. code, fix, implementation). Move a task here only when actively doing the work—not when still planning. At most one (or a configurable WIP limit) at a time per column if enforced. |
 | **Done**       | Completed and accepted. Move here when the task’s acceptance criteria (in its spec file) are satisfied. |
 
 - **Order:** `Backlog` → `Ready` → `In Progress` → `Done` (left to right).
@@ -72,7 +72,7 @@ Statecraft is built around **CRUS** (Create, Read, Update, Summarize). AI agents
 
 - **Where:** New tasks are created with `status: Backlog`.
 - **What:** Add an entry under `tasks` with at least `title` and `status`. Use a stable, kebab-case **task id** (e.g. `fix-auth-timeout`). Optionally set `description`, `spec` (path to a `.md` file relative to the board directory), `owner`, `priority`, `depends_on`.
-- **Spec file:** If the task has acceptance criteria or context, create a markdown file (e.g. `tasks/<task-id>.md`) and set `spec: tasks/<task-id>.md`. Path is relative to the board file’s directory.
+- **Spec file:** If the task has acceptance criteria or context, create a markdown file (e.g. `tasks/<task-id>.md`) and set `spec: tasks/<task-id>.md`. Path is relative to the board file’s directory. See **Task spec file format** below for recommended structure.
 
 ### Read
 
@@ -82,15 +82,36 @@ Statecraft is built around **CRUS** (Create, Read, Update, Summarize). AI agents
 
 ### Update
 
-- **How:** Edit the board YAML file (and, if needed, task spec files) directly. There are no separate “move” APIs; changing `status` is the update.
-- **Prepare for work:** When a task has a clear definition and dependencies are satisfied (or N/A), set `status` to `Ready`. Do not move to In Progress until the task is Ready (or skip Ready if the workflow is minimal).
-- **Start work:** Set the task’s `status` to `In Progress`. Optionally read the task’s `spec` file first.
+- **How:** Edit the board YAML file (and, if needed, task spec files) directly. There are no separate "move" APIs; changing `status` is the update.
+- **Flow:** Backlog → Ready → In Progress → Done. Do not skip Ready.
+- **Create (Backlog):** New tasks start in Backlog. They may be vague; add at least `title` and `status`, and create the spec file if required.
+- **Refine and move to Ready:** After discovery or planning, update the task’s spec file (description, acceptance criteria). When the definition is clear and you know how to solve it, set `status` to **Ready**. Ready means "ready to be worked on."
+- **Start work:** Only when you are about to do the actual work (code, fix, implementation), set the task’s `status` to **In Progress**. Do not move to In Progress while still in discovery or planning. Read the task’s `spec` file if needed.
 - **Finish work:** Set the task’s `status` to `Done` only when the task’s acceptance criteria (in its spec file, if present) are satisfied. Do not move to Done without meeting the definition of done.
 - **Create / change fields:** Add or edit `title`, `status`, `description`, `spec`, `owner`, `priority`, `depends_on` in the board file; create or edit the spec file when the task has one.
 
 ### Summarize
 
 - Completion is represented by moving tasks to **Done**, not by deleting them. Use `statecraft summarize` (or equivalent) to produce a short summary of the board (counts, task list, WIP, blocked). Summarize replaces “delete”: tasks are completed and reasoned about, not removed.
+
+
+## Task spec file format (best practices)
+
+Task spec files (e.g. `tasks/<task-id>.md`) are markdown files referenced by a task's `spec` field. Following a consistent structure keeps specs machine-friendly and clear for both AI and humans.
+
+**Recommended structure:**
+
+| Section | Purpose |
+|--------|---------|
+| **Title** | First line or `# <Task title>` — match or expand the board `title`. |
+| **Description** | Optional `## Description` with short context or problem statement. |
+| **Acceptance criteria / Definition of Done** | `## Acceptance criteria` or `## Definition of Done` with a checklist (e.g. `- [ ] item`). All items must be checked before moving the task to Done. |
+| **Notes / Dependencies** | Optional `## Notes`, `## Dependencies` for human context; `depends_on` in the board is the source of truth for ordering. |
+
+- Use one file per task; put the task id in the filename (e.g. `fix-auth-timeout.md`).
+- Path is relative to the board file's directory.
+
+Init can optionally add these guidelines to generated AI rules (Cursor, Claude Code, Codex) so agents follow the same format.
 
 ---
 
@@ -153,7 +174,7 @@ These constraints are the basis for parser/validator implementations; this spec 
 
 ## Setup and AI workflow
 
-**Creating a board:** Use **`statecraft init`** to create a board file and optionally connect Statecraft to your AI workflow. Init creates a board with the **canonical columns** (Backlog, Ready, In Progress, Done) and prompts for: board name, optional WIP limit for In Progress, board file path, directory for task `.md` files (relative to the board), and whether to generate rules for **Cursor**, **Claude Code**, and/or **Codex**. It writes valid board YAML and, if you choose, tool-specific rule files so your AI assistant knows where the board is and how to follow CRUS.
+**Creating a board:** Use **`statecraft init`** to create a board file and optionally connect Statecraft to your AI workflow. Init creates a board with the **canonical columns** (Backlog, Ready, In Progress, Done) and prompts for: board name, optional WIP limit for In Progress, board file path, directory for task `.md` files (relative to the board), **workflow options** (enforce “create task before any work”, require each task to have a spec `.md` file, include task spec format guidelines in rules — all default to yes), and whether to generate rules for **Cursor**, **Claude Code**, and/or **Codex**. It writes valid board YAML and, if you choose, tool-specific rule files so your AI assistant knows where the board is and how to follow CRUS.
 
 **Generated rule files:**
 

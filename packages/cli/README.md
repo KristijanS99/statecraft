@@ -15,7 +15,7 @@ Then run `statecraft <command>`. Or use `npx @stcrft/statecraft init` (etc.) wit
 
 | Command | Description |
 |--------|-------------|
-| **`statecraft init`** | Interactive setup: create a board file and optionally generate rules for Cursor (`.cursor/rules/statecraft.mdc`), Claude Code (`.claude/rules/statecraft.md`), and/or Codex (`AGENTS.md`) so your AI assistant knows the board path, task lifecycle, and AI guidelines. Re-run to create a new board; edit generated files to tweak guidelines. |
+| **`statecraft init`** | Interactive setup: create a board file and optionally generate rules for Cursor (`.cursor/rules/statecraft.mdc`), Claude Code (`.claude/rules/statecraft.md`), and/or Codex (`AGENTS.md`). Prompts for workflow options (defaults: enforce “create task before any work”, require each task to have a spec `.md` file, include task spec format guidelines). Re-run to create a new board; edit generated files to tweak guidelines. |
 | **`statecraft spec`** | Print the board format spec (for AI agents; no paths). |
 | **`statecraft validate [path]`** | Parse and validate a board file. Exit 0 if valid, 1 on errors. |
 | **`statecraft summarize [path]`** | Print a short text summary of the board (name, columns, tasks, WIP/blocked). |
