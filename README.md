@@ -14,9 +14,27 @@
 ## Requirements
 
 - **Node.js** 20 or later (LTS; actively maintained versions)
-- **pnpm** 9 or later (or use corepack: `corepack enable` then `pnpm install`)
 
 ## Install
+
+**From npm** (works with npm, pnpm, and Yarn):
+
+```bash
+# npm
+npx statecraft init
+# or install globally: npm install -g @stcrft/statecraft
+
+# pnpm
+pnpm add -g @stcrft/statecraft
+# or: pnpm dlx statecraft init
+
+# Yarn (v2+)
+yarn global add @stcrft/statecraft
+```
+
+**From source** (for development or contributing):
+
+- **pnpm** 9 or later (or use corepack: `corepack enable` then `pnpm install`)
 
 ```bash
 git clone https://github.com/KristijanS99/statecraft.git
