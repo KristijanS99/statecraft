@@ -20,6 +20,7 @@ Then run `statecraft <command>`. Or use `npx @stcrft/statecraft init` (etc.) wit
 | **`statecraft validate [path]`** | Parse and validate a board file. Exit 0 if valid, 1 on errors. |
 | **`statecraft summarize [path]`** | Print a short text summary of the board (name, columns, tasks, WIP/blocked). |
 | **`statecraft render [path]`** | Serve the board in the browser (read-only UI). Options: `--port 3000` (default), `--open` (open browser). Starts a local server with `GET /api/board` and WebSocket for live updates when the file changes. |
+| **`statecraft sync`** | Update generated rule files to the current template. Reads `.statecraft.json` if present; otherwise parses existing Cursor/Claude/Codex rule files. Overwrites generated content (back up if customized). `--dry-run` lists files that would be updated. |
 
 ## Upgrade notification
 

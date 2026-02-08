@@ -27,3 +27,6 @@ export const INIT_REQUIRE_SPEC_FILE_DEFAULT = true;
 
 /** Init default: include task spec .md format guidelines in generated rules. */
 export const INIT_INCLUDE_TASK_SPEC_FORMAT_DEFAULT = true;
+
+/** Filename for Statecraft config written by init and read by sync (.statecraft.json). */
+export const STATECRAFT_CONFIG_FILENAME = ".statecraft.json";
