@@ -1,5 +1,5 @@
 {
-  "name": "statecraft",
+  "name": "@stcrft/statecraft",
   "version": "1.1.0",
   "description": "CLI for Statecraft: validate, summarize, and render board-as-code",
   "type": "module",
@@ -20,7 +20,7 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@statecraft/core": "workspace:*",
+    "@stcrft/statecraft-core": "workspace:*",
     "commander": "^12.1.0",
     "express": "^5.2.1",
     "open": "^11.0.0",

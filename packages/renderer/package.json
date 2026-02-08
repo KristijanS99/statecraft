@@ -1,5 +1,5 @@
 {
-  "name": "@statecraft/renderer",
+  "name": "@stcrft/statecraft-renderer",
   "version": "0.0.1",
   "private": true,
   "type": "module",
@@ -12,7 +12,7 @@
     "e2e:server": "node e2e-server.mjs 3000"
   },
   "dependencies": {
-    "@statecraft/core": "workspace:*",
+    "@stcrft/statecraft-core": "workspace:*",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-markdown": "^10.1.0",

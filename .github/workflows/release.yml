@@ -1,6 +1,6 @@
 # Runs on push to main (e.g. after a PR merge). Uses conventional commits to
 # determine the next version, bumps version in package.json files, tags, creates
-# a GitHub Release, and publishes @statecraft/core and statecraft to npm.
+# a GitHub Release, and publishes @stcrft/statecraft-core and @stcrft/statecraft to npm.
 # Protected main (require PR + CI) so all changes go through this flow.
 
 name: Release

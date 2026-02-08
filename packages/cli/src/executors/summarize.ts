@@ -1,4 +1,4 @@
-import { parseBoard, summarize } from "@statecraft/core";
+import { parseBoard, summarize } from "@stcrft/statecraft-core";
 
 export function runSummarize(path: string): void {
   try {
