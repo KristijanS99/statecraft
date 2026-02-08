@@ -16,10 +16,11 @@
   },
   "files": [
     "dist",
-    "spec.md"
+    "spec.md",
+    "renderer-dist"
   ],
   "scripts": {
-    "build": "node scripts/copy-spec.mjs && tsup",
+    "build": "node scripts/copy-spec.mjs && node scripts/copy-renderer.mjs && tsup",
     "test": "vitest run"
   },
   "dependencies": {

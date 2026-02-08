@@ -49,7 +49,7 @@ describe("buildCursorRuleContent", () => {
     const content = buildCursorRuleContent("board.yaml", "tasks");
     expect(content).toMatch(/^---\n[\s\S]*?\n---/);
     expect(content).toContain("description:");
-    expect(content).toContain("alwaysApply: false");
+    expect(content).toContain("alwaysApply: true");
   });
 });
 

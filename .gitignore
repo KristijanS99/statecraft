@@ -9,6 +9,8 @@ dist/
 build/
 # CLI spec (copied from docs/spec.md on build)
 packages/cli/spec.md
+# CLI renderer (copied from packages/renderer/dist on build)
+packages/cli/renderer-dist
 *.tsbuildinfo
 
 # Environment

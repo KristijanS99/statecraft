@@ -14,6 +14,8 @@ This project uses Statecraft for the task board.
 
 ## Commands
 
+Use \`statecraft\` if installed globally. If not in PATH, use \`npx statecraft\` (npm), \`pnpm dlx statecraft\` (pnpm), or \`yarn dlx statecraft\` (yarn)—e.g. \`npx statecraft validate ${boardPath}\`.
+
 - Get board format spec: \`statecraft spec\`
 - Validate board: \`statecraft validate ${boardPath}\`
 - View board in browser: \`statecraft render ${boardPath}\`
@@ -27,6 +29,7 @@ This project uses Statecraft for the task board.
 
 ## AI guidelines for creating tickets
 
+- **Keep the board in sync:** When doing substantive work (e.g. a new feature, fix, or refactor), create a new task in Backlog or move an existing task to In Progress/Done as appropriate. Update the board file and optionally add or update a task spec in \`${tasksDir}/\`.
 - **Task naming:** kebab-case, verb or noun phrase (e.g. \`fix-auth-timeout\`).
 - **Description:** One line summary; optional markdown for context.
 - **Definition of Done:** Acceptance criteria in task spec; all checked before moving to Done.
