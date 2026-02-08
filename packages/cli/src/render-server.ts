@@ -128,6 +128,7 @@ export function startRenderServer(options: RenderServerOptions): void {
   });
 
   let debounceTimer: ReturnType<typeof setTimeout> | null = null;
+  let boardWatcher: ReturnType<typeof fs.watch> | null = null;
 
   function broadcastBoard(): void {
     const content = readBoardContent(boardPath);
@@ -148,7 +149,7 @@ export function startRenderServer(options: RenderServerOptions): void {
   });
 
   try {
-    fs.watch(resolvedBoardPath, { persistent: false }, () => {
+    boardWatcher = fs.watch(resolvedBoardPath, { persistent: false }, () => {
       if (debounceTimer) clearTimeout(debounceTimer);
       debounceTimer = setTimeout(() => {
         debounceTimer = null;
@@ -177,9 +178,23 @@ export function startRenderServer(options: RenderServerOptions): void {
     }
   });
 
+  let shuttingDown = false;
   const shutdown = () => {
-    server.close(() => {
-      process.exit(process.exitCode ?? 0);
+    if (shuttingDown) {
+      process.exit(1);
+      return;
+    }
+    shuttingDown = true;
+    if (debounceTimer) {
+      clearTimeout(debounceTimer);
+      debounceTimer = null;
+    }
+    boardWatcher?.close();
+    boardWatcher = null;
+    wss.close(() => {
+      server.close(() => {
+        process.exit(process.exitCode ?? 0);
+      });
     });
   };
   process.on("SIGINT", shutdown);
