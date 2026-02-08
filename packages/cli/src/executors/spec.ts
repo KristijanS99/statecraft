@@ -1,17 +1,8 @@
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-
-function findPackageRoot(startDir: string): string | null {
-  let dir = path.resolve(startDir);
-  for (;;) {
-    const pkgPath = path.join(dir, "package.json");
-    if (fs.existsSync(pkgPath)) return dir;
-    const parent = path.dirname(dir);
-    if (parent === dir) return null;
-    dir = parent;
-  }
-}
+import { SPEC_FILENAME } from "../constants.js";
+import { findPackageRoot } from "../utils.js";
 
 export function runSpec(): void {
   const thisFile = fileURLToPath(import.meta.url);
@@ -22,7 +13,7 @@ export function runSpec(): void {
     process.exitCode = 1;
     return;
   }
-  const specPath = path.join(packageRoot, "spec.md");
+  const specPath = path.join(packageRoot, SPEC_FILENAME);
   if (!fs.existsSync(specPath)) {
     process.stderr.write(`statecraft spec: spec file not found at ${specPath}\n`);
     process.exitCode = 1;
