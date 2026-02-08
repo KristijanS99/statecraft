@@ -1,0 +1,32 @@
+---
+description: Statecraft board and task workflow; when to update the board and how to create tasks
+alwaysApply: false
+---
+# Statecraft
+
+This project uses Statecraft for the task board.
+
+- **Board file:** `docs-private/statecraft-development.yaml`
+- **Task spec files:** `docs-private/tasks/<task-id>.md` (relative to board directory)
+- **Columns (canonical):** Backlog → Ready → In Progress → Done.
+
+## Commands
+
+- Get board format spec: `statecraft spec`
+- Validate board: `statecraft validate docs-private/statecraft-development.yaml`
+- View board in browser: `statecraft render docs-private/statecraft-development.yaml`
+
+## Task lifecycle (edit board and task files directly)
+
+- **Prepare for work:** When the task has a clear definition and dependencies are satisfied, set `status` to **Ready**.
+- **Start work:** Set the task's `status` to **In Progress**. Optionally open/read the task's `spec` file.
+- **Finish work:** Set the task's `status` to **Done** only when the task's acceptance criteria (in its spec file) are satisfied.
+- **Create task:** Add an entry under `tasks` with `status: Backlog` (id, title, optional description, spec, owner, priority, depends_on). If needed, create `docs-private/tasks/<task-id>.md` with description and DoD.
+
+## AI guidelines for creating tickets
+
+- **Task naming:** kebab-case, verb or noun phrase (e.g. `fix-auth-timeout`).
+- **Description:** One line summary; optional markdown for context.
+- **Definition of Done:** Acceptance criteria in task spec; all checked before moving to Done.
+- **Task fields (from spec):** `title` (required), `status` (required), optional `description`, `spec` (path to .md), `owner`, `priority`, `depends_on`.
+- **Spec file:** Path relative to board directory, e.g. `docs-private/tasks/<task-id>.md`.
