@@ -24,7 +24,13 @@ module.exports = {
         message: "chore(release): ${nextRelease.version} [skip ci]",
       },
     ],
-    "@semantic-release/github",
+    [
+      "@semantic-release/github",
+      {
+        // Avoid "Resource not accessible by integration" when fetching associated PRs
+        successComment: false,
+      },
+    ],
     "./scripts/release-publish.cjs",
   ],
 };
