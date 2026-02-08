@@ -9,10 +9,15 @@ import { DEFAULT_RENDER_PORT, RENDER_WATCH_DEBOUNCE_MS } from "./constants.js";
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 /**
- * Resolve path to the renderer's dist folder (sibling package in monorepo).
- * When running from packages/cli/dist, go up to packages and into renderer/dist.
+ * Resolve path to the renderer's static files.
+ * - When installed from npm: bundled at package-root/renderer-dist.
+ * - When running in monorepo: sibling package at packages/renderer/dist.
  */
 function getRendererDistPath(): string {
+  const bundled = path.resolve(__dirname, "..", "renderer-dist");
+  if (fs.existsSync(bundled) && fs.statSync(bundled).isDirectory()) {
+    return bundled;
+  }
   return path.resolve(__dirname, "..", "..", "renderer", "dist");
 }
 

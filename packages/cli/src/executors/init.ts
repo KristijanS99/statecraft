@@ -183,7 +183,7 @@ function writeCodexRule(cwd: string, boardPath: string, specDir: string, log: (m
 export function buildCursorRuleContent(boardPath: string, tasksDir: string): string {
   return `---
 description: Statecraft board and task workflow; when to update the board and how to create tasks
-alwaysApply: false
+alwaysApply: true
 ---
 ${buildStatecraftRuleBody(boardPath, tasksDir)}`;
 }
