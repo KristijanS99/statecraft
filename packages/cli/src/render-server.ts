@@ -150,9 +150,17 @@ export function startRenderServer(options: RenderServerOptions): void {
         broadcastBoard();
       }, RENDER_WATCH_DEBOUNCE_MS);
     });
-  } catch (err) {
+  } catch {
     // File might not exist yet; watcher will not run
   }
+
+  server.on("error", (err: Error & { code?: string }) => {
+    process.stderr.write(`Render server error: ${err.message}\n`);
+    if (err.code === "EADDRINUSE") {
+      process.stderr.write(`Port ${port} is in use. Try --port <number>.\n`);
+    }
+    process.exitCode = 1;
+  });
 
   server.listen(port, () => {
     const url = `http://localhost:${port}`;
@@ -163,4 +171,12 @@ export function startRenderServer(options: RenderServerOptions): void {
       });
     }
   });
+
+  const shutdown = () => {
+    server.close(() => {
+      process.exit(process.exitCode ?? 0);
+    });
+  };
+  process.on("SIGINT", shutdown);
+  process.on("SIGTERM", shutdown);
 }

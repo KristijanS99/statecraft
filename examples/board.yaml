@@ -6,13 +6,10 @@ board: "Platform MVP"
 
 columns:
   - Backlog
-  - name: Ready
-    limit: 5
+  - Ready
   - name: In Progress
     limit: 3
-  - Review
-  - name: Done
-    limit: 20
+  - Done
 
 tasks:
   P-1:
@@ -46,7 +43,7 @@ tasks:
     depends_on: P-3
   P-6:
     title: "Write integration tests for auth"
-    status: Review
+    status: In Progress
     owner: dev
     priority: high
     depends_on: P-3

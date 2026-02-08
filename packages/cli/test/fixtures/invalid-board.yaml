@@ -1,5 +1,6 @@
+# Invalid board: task status does not match any column
 board: "Invalid"
-columns: [A, B]
+columns: [Backlog, Ready, In Progress, Done]
 tasks:
   t1:
     title: "Task"

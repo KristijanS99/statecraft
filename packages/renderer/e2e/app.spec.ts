@@ -15,6 +15,7 @@ test.describe("Renderer E2E", () => {
     });
     // Column names (lane headers)
     await expect(page.getByText("Backlog").first()).toBeVisible();
+    await expect(page.getByText("Ready").first()).toBeVisible();
     await expect(page.getByText("In Progress").first()).toBeVisible();
     await expect(page.getByText("Done").first()).toBeVisible();
     // At least one task card with id and title
@@ -30,8 +31,8 @@ test.describe("Renderer E2E", () => {
       timeout: 10_000,
     });
     const lanes = page.locator(".lane");
-    await expect(lanes).toHaveCount(3);
-    // Backlog has 1 task, In Progress 1, Done 1
+    await expect(lanes).toHaveCount(4);
+    // Backlog has 1 task, Ready 0, In Progress 1, Done 1
     const cards = page.locator("[data-task-id]");
     await expect(cards).toHaveCount(3);
   });

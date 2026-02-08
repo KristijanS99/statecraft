@@ -37,6 +37,8 @@ Path defaults to `./board.yaml` when omitted.
 
 | Command | Description |
 |--------|-------------|
+| **`statecraft init`** | Interactive setup: create a board file and optionally generate rules for Cursor (`.cursor/rules/statecraft.mdc`), Claude Code (`.claude/rules/statecraft.md`), and/or Codex (`AGENTS.md`) so your AI assistant knows the board path, task lifecycle, and AI guidelines. Re-run to create a new board; edit generated files to tweak guidelines. |
+| **`statecraft spec`** | Print the board format spec (for AI agents; no paths). |
 | **`statecraft validate [path]`** | Parse and validate a board file. Exit 0 if valid, 1 on errors. |
 | **`statecraft summarize [path]`** | Print a short text summary (board name, column counts, task list, WIP/blocked) to stdout. |
 | **`statecraft render [path]`** | Serve the board in the browser. Serves the built renderer and the board at `GET /api/board`; WebSocket pushes updates when the file changes. |
@@ -45,7 +47,15 @@ Path defaults to `./board.yaml` when omitted.
 
 **Example boards** are in [`examples/`](examples/): try `pnpm cli validate examples/board.yaml`, then `pnpm cli render examples/board.yaml --open`.
 
+### Setup with init
+
+For a new project or repo, run **`statecraft init`** to create your board and connect it to your AI workflow. Init creates a board with the **canonical columns** (Backlog, Ready, In Progress, Done) and prompts for board name, board file path (default `board.yaml`), task spec directory (default `tasks`), optional WIP limit for In Progress, and whether to generate rules for **Cursor** (default yes), **Claude Code**, and **Codex**. Generated files (e.g. `.cursor/rules/statecraft.mdc`, `.claude/rules/statecraft.md`, or a Statecraft section in `AGENTS.md`) include the board path, commands (`statecraft validate`, `render`), task lifecycle (prepare for work → Ready, start → In Progress, finish → Done), and default AI guidelines. Edit any generated file to customize the guidelines.
+
 ### Quick start
+
+**New project:** Run `pnpm cli init` to create your board and optional Cursor / Claude Code / Codex rules, then validate and render the path init gave you.
+
+**Existing board or examples:**
 
 ```bash
 pnpm build
@@ -58,7 +68,7 @@ When you open the renderer without a server (e.g. Vite dev), you can paste YAML 
 
 ## Board format (DSL)
 
-The board format is a single YAML file with `board` (name), `columns` (ordered lanes, optional WIP limits), and `tasks` (id → title, status, optional description, owner, priority, depends_on). Full grammar and field reference:
+The board format is a single YAML file with `board` (name), `columns` (canonical set: **Backlog → Ready → In Progress → Done**; optional WIP limit on In Progress), and `tasks` (id → title, status, optional description, owner, priority, depends_on). Full grammar and field reference:
 
 - **[Statecraft board DSL — Spec (v0)](docs/spec.md)**
 

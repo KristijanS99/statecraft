@@ -1,5 +1,8 @@
 import type { Board, Column, Task } from "./ast.js";
 
+/** Canonical column set per spec: exact names and order. */
+export const CANONICAL_COLUMNS = ["Backlog", "Ready", "In Progress", "Done"] as const;
+
 /** A single validation error (or warning). */
 export interface ValidationError {
   /** Human-readable message. */
@@ -29,7 +32,28 @@ export function validateBoard(board: Board): ValidationError[] {
   const errors: ValidationError[] = [];
   const columnNames = board.columns.map((c) => c.name);
 
-  // Column names unique
+  // Canonical columns: must be Backlog, Ready, In Progress, Done in that order
+  if (board.columns.length !== CANONICAL_COLUMNS.length) {
+    errors.push({
+      path: "columns",
+      message: `Board must have exactly ${CANONICAL_COLUMNS.length} columns: ${CANONICAL_COLUMNS.join(", ")}. Got ${board.columns.length}.`,
+      code: "COLUMNS_NOT_CANONICAL",
+    });
+  } else {
+    for (let i = 0; i < CANONICAL_COLUMNS.length; i++) {
+      const expected = CANONICAL_COLUMNS[i];
+      const actual = board.columns[i]?.name;
+      if (actual !== expected) {
+        errors.push({
+          path: `columns[${i}]`,
+          message: `Column at index ${i} must be "${expected}". Got "${actual}". Canonical order: ${CANONICAL_COLUMNS.join(", ")}.`,
+          code: "COLUMNS_NOT_CANONICAL",
+        });
+      }
+    }
+  }
+
+  // Column names unique (redundant if canonical check passed, but keeps other checks consistent)
   const seen = new Set<string>();
   for (let i = 0; i < board.columns.length; i++) {
     const name = board.columns[i].name;
