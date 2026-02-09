@@ -28,3 +28,7 @@ Summarize replaces Delete: tasks are completed and reasoned about, not thrown aw
 > **Boring, deterministic, inspectable infrastructure beats clever SaaS.**
 
 Statecraft is infrastructure for task state—designed for AI agents first, with developers benefiting from the same format and a read-only view in the browser.
+
+---
+
+**Acknowledgments.** The idea came from a conversation with [Yishay Haspel](https://github.com/yishayh): *Mermaid, but for Kanban*—boards as code in the repo for us and our AI tools.

@@ -7,6 +7,12 @@
   <img src="logo-small.png" width="200" alt="Statecraft logo" />
 </p>
 
+### How Statecraft started
+
+A talk with my dear colleague and friend [Yishay Haspel](https://github.com/yishayh) about how we use Cursor and `.md` files to manage tasks led to a simple question: what if we had something like Mermaid, but for Kanban? Boards as code, in the repo, that both we and our AI tools could use. Statecraft is that idea turned into a real tool. Thanks, Yishay.
+
+---
+
 **Statecraft** is an AI-first, developer-friendly standard for representing Kanban-style task boards as code. Boards are defined in a small YAML DSL and live in your repo as the source of truth. The CLI validates and summarizes boards; a read-only web renderer lets you view them in the browser. No editing in the UI—boards are meant to be changed by AI agents (or in code) and versioned in Git.
 
 **Why?** Task tools today are UI-first and hard for AI agents to use. Statecraft gives you a machine-readable task language in the repo—deterministic, diffable, and built for AI to read, update, and summarize. [Read more about motivation and principles →](docs/why-statecraft.md)
